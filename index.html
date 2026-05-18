@@ -1,0 +1,1472 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --red: #ff4655;
+        --red-dim: #c43340;
+        --bg: #0f1923;
+        --bg2: #1a242f;
+        --bg3: #243040;
+        --surface: #1e2d3d;
+        --border: rgba(255, 70, 85, 0.18);
+        --border2: rgba(255, 255, 255, 0.08);
+        --text: #ece8e1;
+        --muted: #7f9bb3;
+        --success: #4ade80;
+        --warning: #fbbf24;
+        --danger: #f87171;
+        --info: #60a5fa;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Barlow", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 2rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg);
+      }
+      .logo {
+        font-family: "Barlow Condensed", sans-serif;
+        font-weight: 700;
+        font-size: 22px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text);
+      }
+      .logo span {
+        color: var(--red);
+      }
+      .nav-badge {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        border: 1px solid var(--border2);
+        padding: 4px 12px;
+        border-radius: 2px;
+      }
+      main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 1rem 4rem;
+      }
+      .container {
+        width: 100%;
+        max-width: 720px;
+      }
+      .splash {
+        text-align: center;
+        padding: 4rem 2rem;
+      }
+      .splash-title {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: clamp(48px, 8vw, 80px);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        line-height: 1;
+        margin-bottom: 1rem;
+      }
+      .splash-title span {
+        color: var(--red);
+      }
+      .splash-sub {
+        font-size: 15px;
+        color: var(--muted);
+        max-width: 420px;
+        margin: 0 auto 2.5rem;
+        line-height: 1.6;
+      }
+      .name-form {
+        display: flex;
+        gap: 10px;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      .quiz-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border2);
+      }
+      .round-info {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+      }
+      .round-info b {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .score-display {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+      .score-chip {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        background: var(--bg2);
+        border: 1px solid var(--border2);
+        padding: 5px 14px;
+        border-radius: 2px;
+      }
+      .score-chip b {
+        color: var(--red);
+        font-weight: 700;
+        font-size: 16px;
+      }
+      .tabs {
+        display: flex;
+        gap: 0;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border2);
+      }
+      .tab-btn {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 8px 20px;
+        background: none;
+        border: none;
+        color: var(--muted);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+        transition: color 0.15s;
+      }
+      .tab-btn.active {
+        color: var(--red);
+        border-bottom-color: var(--red);
+      }
+      .section-label {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      .agent-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        margin-bottom: 1.25rem;
+      }
+      @media (max-width: 500px) {
+        .agent-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      .agent-card {
+        background: var(--bg2);
+        border: 1px solid var(--border2);
+        border-radius: 3px;
+        padding: 10px 8px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .agent-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--red);
+        opacity: 0.6;
+      }
+      .agent-card-name {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+      .agent-stat-val {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text);
+      }
+      .agent-stat-label {
+        font-size: 10px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .agent-use {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 11px;
+        color: var(--red);
+        margin-top: 6px;
+        letter-spacing: 0.06em;
+      }
+      .agent-rounds {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 10px;
+        color: var(--muted);
+        letter-spacing: 0.04em;
+      }
+      .stat-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 1.25rem;
+      }
+      .stat-box {
+        background: var(--bg2);
+        border: 1px solid var(--border2);
+        border-radius: 3px;
+        padding: 12px;
+        text-align: center;
+      }
+      .stat-box-label {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+      .stat-box-val {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .clue-panel {
+        background: var(--bg2);
+        border: 1px solid var(--border2);
+        border-radius: 3px;
+        padding: 0;
+        margin-bottom: 1.25rem;
+        overflow: hidden;
+      }
+      .clue-panel-header {
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--border2);
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        background: var(--bg3);
+      }
+      .clue-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border2);
+      }
+      .clue-row:last-child {
+        border-bottom: none;
+      }
+      .clue-row-label {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .clue-row-value {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text);
+      }
+      .clue-locked-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .cost-tag {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--warning);
+        background: rgba(251, 191, 36, 0.1);
+        border: 1px solid rgba(251, 191, 36, 0.25);
+        padding: 2px 8px;
+        border-radius: 2px;
+      }
+      .feedback {
+        padding: 10px 16px;
+        border-radius: 3px;
+        font-size: 13px;
+        margin-bottom: 1rem;
+        border-left: 3px solid;
+      }
+      .feedback.wrong {
+        background: rgba(248, 113, 113, 0.1);
+        border-color: var(--danger);
+        color: var(--danger);
+      }
+      .feedback.correct {
+        background: rgba(74, 222, 128, 0.1);
+        border-color: var(--success);
+        color: var(--success);
+      }
+      .feedback.info {
+        background: rgba(96, 165, 250, 0.1);
+        border-color: var(--info);
+        color: var(--info);
+      }
+      input[type="text"] {
+        background: var(--bg2);
+        border: 1px solid var(--border2);
+        border-radius: 2px;
+        color: var(--text);
+        font-family: "Barlow", sans-serif;
+        font-size: 14px;
+        padding: 10px 14px;
+        outline: none;
+        transition: border-color 0.15s;
+        width: 100%;
+      }
+      input[type="text"]:focus {
+        border-color: var(--red);
+      }
+      input[type="text"]::placeholder {
+        color: var(--muted);
+      }
+      .btn {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 2px;
+        border: 1px solid var(--border2);
+        background: transparent;
+        color: var(--text);
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+        white-space: nowrap;
+      }
+      .btn:hover {
+        background: var(--bg3);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+      .btn-red {
+        background: var(--red);
+        border-color: var(--red);
+        color: #fff;
+      }
+      .btn-red:hover {
+        background: var(--red-dim);
+        border-color: var(--red-dim);
+      }
+      .btn-full {
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+        font-size: 15px;
+      }
+      .input-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 1rem;
+        position: relative;
+      }
+      .autocomplete {
+        position: relative;
+        flex: 1;
+      }
+      .ac-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg3);
+        border: 1px solid var(--border2);
+        border-top: none;
+        border-radius: 0 0 2px 2px;
+        z-index: 10;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+      .ac-item {
+        padding: 9px 14px;
+        font-size: 13px;
+        cursor: pointer;
+        font-family: "Barlow Condensed", sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        transition: background 0.1s;
+      }
+      .ac-item:hover {
+        background: var(--bg2);
+        color: var(--red);
+      }
+      .result-hero {
+        text-align: center;
+        padding: 2.5rem;
+        background: var(--bg2);
+        border: 1px solid var(--border2);
+        border-radius: 3px;
+        margin-bottom: 1.25rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .result-hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--red);
+      }
+      .result-verdict {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+      .result-big {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: clamp(48px, 10vw, 80px);
+        font-weight: 700;
+        line-height: 1;
+        color: var(--red);
+      }
+      .result-denom {
+        font-size: 22px;
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .result-label {
+        font-size: 15px;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+      .round-chips {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 1.25rem;
+        flex-wrap: wrap;
+      }
+      .round-chip {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        border-radius: 2px;
+        padding: 4px 14px;
+        text-align: center;
+      }
+      .lb-panel {
+        background: var(--bg2);
+        border: 1px solid var(--border2);
+        border-radius: 3px;
+        margin-bottom: 1.25rem;
+        overflow: hidden;
+      }
+      .lb-header {
+        padding: 10px 16px;
+        background: var(--bg3);
+        border-bottom: 1px solid var(--border2);
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+      }
+      .lb-row {
+        display: flex;
+        align-items: center;
+        padding: 11px 16px;
+        border-bottom: 1px solid var(--border2);
+        gap: 12px;
+        transition: background 0.1s;
+      }
+      .lb-row:last-child {
+        border-bottom: none;
+      }
+      .lb-row.you {
+        background: rgba(255, 70, 85, 0.07);
+      }
+      .lb-rank {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--muted);
+        width: 32px;
+      }
+      .lb-rank.gold {
+        color: #fbbf24;
+      }
+      .lb-rank.silver {
+        color: #94a3b8;
+      }
+      .lb-rank.bronze {
+        color: #b45309;
+      }
+      .lb-name {
+        flex: 1;
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .lb-score {
+        font-family: "Barlow Condensed", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--red);
+      }
+      .lb-you-tag {
+        font-size: 10px;
+        background: rgba(255, 70, 85, 0.15);
+        color: var(--red);
+        border: 1px solid rgba(255, 70, 85, 0.3);
+        padding: 2px 8px;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 2.5rem;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .diag-line {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 1px;
+        height: 100%;
+        background: linear-gradient(
+          to bottom,
+          transparent,
+          var(--border),
+          transparent
+        );
+        opacity: 0.4;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">VLR<span>.</span>Quiz</div>
+      <div class="nav-badge">Stats Upto 18 May 2025</div>
+    </nav>
+    <div class="diag-line"></div>
+    <main>
+      <div class="container">
+        <div id="app"></div>
+      </div>
+    </main>
+    <script>
+      const PLAYERS = [
+        {
+          ign: "nobody",
+          name: "Wang Senxu (王森旭)",
+          country: "China",
+          region: "CN",
+          tier: "Tier 1",
+          team: "EDward Gaming",
+          agents: [
+            {
+              name: "Sova",
+              rounds: 5002,
+              pct: "39%",
+              rating: 1.05,
+              acs: 206,
+              kd: 1.08,
+              adr: 136,
+            },
+            {
+              name: "Skye",
+              rounds: 2217,
+              pct: "17%",
+              rating: 0.96,
+              acs: 194,
+              kd: 1,
+              adr: 125,
+            },
+            {
+              name: "Fade",
+              rounds: 2080,
+              pct: "16%",
+              rating: 1.04,
+              acs: 195,
+              kd: 1.07,
+              adr: 129,
+            },
+            {
+              name: "Tejo",
+              rounds: 607,
+              pct: "5%",
+              rating: 0.9,
+              acs: 180,
+              kd: 0.91,
+              adr: 121,
+            },
+            {
+              name: "Cypher",
+              rounds: 535,
+              pct: "4%",
+              rating: 0.9,
+              acs: 198,
+              kd: 1.05,
+              adr: 121,
+            },
+          ],
+          overall: {
+            rating: 0.97,
+            acs: 199,
+            kd: 1.04,
+            adr: 129,
+          },
+        },
+        {
+          ign: "purp0",
+          name: "Semyon Borchev",
+          country: "Russia",
+          region: "EMEA",
+          tier: "Tier 1",
+          team: "Team Liquid",
+          agents: [
+            {
+              name: "Jett",
+              rounds: 2767,
+              pct: "34%",
+              rating: 1.31,
+              acs: 270,
+              kd: 1.48,
+              adr: 166,
+            },
+            {
+              name: "Raze",
+              rounds: 906,
+              pct: "11%",
+              rating: 1.15,
+              acs: 254,
+              kd: 1.19,
+              adr: 164,
+            },
+            {
+              name: "Skye",
+              rounds: 739,
+              pct: "9%",
+              rating: 1.14,
+              acs: 201,
+              kd: 1.26,
+              adr: 133,
+            },
+            {
+              name: "Cypher",
+              rounds: 693,
+              pct: "8%",
+              rating: 1.19,
+              acs: 204,
+              kd: 1.09,
+              adr: 144,
+            },
+            {
+              name: "Sova",
+              rounds: 613,
+              pct: "8%",
+              rating: 1.18,
+              acs: 217,
+              kd: 1.31,
+              adr: 138,
+            },
+          ],
+          overall: {
+            rating: 1.2,
+            acs: 237,
+            kd: 1.29,
+            adr: 152,
+          },
+        },
+        {
+          ign: "Sato",
+          name: "Eduardo Kenzo Nagahama Sato",
+          country: "Brazil",
+          region: "AMER",
+          tier: "Tier 1",
+          team: "LEVIATÁN",
+          agents: [
+            {
+              name: "Jett",
+              rounds: 3833,
+              pct: "51%",
+              rating: 1.18,
+              acs: 247,
+              kd: 1.29,
+              adr: 158,
+            },
+            {
+              name: "Raze",
+              rounds: 1267,
+              pct: "16%",
+              rating: 1.18,
+              acs: 260,
+              kd: 1.22,
+              adr: 171,
+            },
+            {
+              name: "Yoru",
+              rounds: 822,
+              pct: "11%",
+              rating: 1.23,
+              acs: 262,
+              kd: 1.35,
+              adr: 166,
+            },
+            {
+              name: "Neon",
+              rounds: 691,
+              pct: "9%",
+              rating: 1,
+              acs: 231,
+              kd: 1.05,
+              adr: 147,
+            },
+            {
+              name: "Waylay",
+              rounds: 307,
+              pct: "4%",
+              rating: 0.86,
+              acs: 197,
+              kd: 0.99,
+              adr: 126,
+            },
+          ],
+          overall: {
+            rating: 1.15,
+            acs: 246,
+            kd: 1.24,
+            adr: 158,
+          },
+        },
+        {
+          ign: "Meteor",
+          name: "Kim Tae-oh (김태오)",
+          country: "South korea",
+          region: "APAC",
+          tier: "Tier 1",
+          team: "T1",
+          agents: [
+            {
+              name: "Jett",
+              rounds: 2610,
+              pct: "28%",
+              rating: 1.09,
+              acs: 247,
+              kd: 1.17,
+              adr: 154,
+            },
+            {
+              name: "Killjoy",
+              rounds: 2125,
+              pct: "22%",
+              rating: 1.05,
+              acs: 219,
+              kd: 1.15,
+              adr: 147,
+            },
+            {
+              name: "Cypher",
+              rounds: 1092,
+              pct: "11%",
+              rating: 0.98,
+              acs: 205,
+              kd: 1.03,
+              adr: 135,
+            },
+            {
+              name: "Viper",
+              rounds: 816,
+              pct: "8%",
+              rating: 0.99,
+              acs: 214,
+              kd: 1.03,
+              adr: 140,
+            },
+            {
+              name: "Vyse",
+              rounds: 627,
+              pct: "6%",
+              rating: 1.02,
+              acs: 223,
+              kd: 1.05,
+              adr: 145,
+            },
+          ],
+          overall: {
+            rating: 1.04,
+            acs: 227,
+            kd: 1.12,
+            adr: 147,
+          },
+        },
+        {
+          ign: "Rarga",
+          name: "Arthur Churyumov",
+          country: "Russia",
+          region: "CN",
+          tier: "Tier 1",
+          team: "Xi Lai Gaming",
+          agents: [
+            {
+              name: "Neon",
+              rounds: 1804,
+              pct: "32%",
+              rating: 0.93,
+              acs: 241,
+              kd: 1.12,
+              adr: 136,
+            },
+            {
+              name: "Jett",
+              rounds: 1104,
+              pct: "18%",
+              rating: 1,
+              acs: 232,
+              kd: 1.05,
+              adr: 148,
+            },
+            {
+              name: "Yoru",
+              rounds: 1067,
+              pct: "19%",
+              rating: 1.07,
+              acs: 239,
+              kd: 1.14,
+              adr: 151,
+            },
+            {
+              name: "Raze",
+              rounds: 653,
+              pct: "12%",
+              rating: 1.13,
+              acs: 252,
+              kd: 1.18,
+              adr: 167,
+            },
+            {
+              name: "Chamber",
+              rounds: 241,
+              pct: "4%",
+              rating: 1.21,
+              acs: 241,
+              kd: 1.3,
+              adr: 159,
+            },
+          ],
+          overall: {
+            rating: 1.02,
+            acs: 240,
+            kd: 1.14,
+            adr: 147,
+          },
+        },
+        {
+          ign: "Chronicle",
+          name: "Timofey Khromov",
+          country: "Russia",
+          region: "EMEA",
+          tier: "Tier 1",
+          team: "Team Vitality",
+          agents: [
+            {
+              name: "Viper",
+              rounds: 2949,
+              pct: "22%",
+              rating: 1.16,
+              acs: 229,
+              kd: 1.22,
+              adr: 151,
+            },
+            {
+              name: "Sova",
+              rounds: 2929,
+              pct: "24%",
+              rating: 1.14,
+              acs: 213,
+              kd: 1.25,
+              adr: 140,
+            },
+            {
+              name: "Breach",
+              rounds: 1519,
+              pct: "12%",
+              rating: 1.13,
+              acs: 203,
+              kd: 1.17,
+              adr: 129,
+            },
+            {
+              name: "Chamber",
+              rounds: 750,
+              pct: "6%",
+              rating: 1.16,
+              acs: 228,
+              kd: 1.29,
+              adr: 148,
+            },
+            {
+              name: "Raze",
+              rounds: 646,
+              pct: "5%",
+              rating: 1.16,
+              acs: 269,
+              kd: 1.36,
+              adr: 163,
+            },
+          ],
+          overall: {
+            rating: 1.12,
+            acs: 219,
+            kd: 1.2,
+            adr: 143,
+          },
+        },
+        {
+          ign: "zekken",
+          name: "Zachary Patrone",
+          country: "United states",
+          region: "AMER",
+          tier: "Tier 1",
+          team: "MIBR",
+          agents: [
+            {
+              name: "Raze",
+              rounds: 5349,
+              pct: "37%",
+              rating: 1.16,
+              acs: 257,
+              kd: 1.23,
+              adr: 166,
+            },
+            {
+              name: "Sova",
+              rounds: 2565,
+              pct: "17%",
+              rating: 1.36,
+              acs: 256,
+              kd: 1.39,
+              adr: 168,
+            },
+            {
+              name: "Jett",
+              rounds: 1724,
+              pct: "12%",
+              rating: 1.12,
+              acs: 240,
+              kd: 1.19,
+              adr: 153,
+            },
+            {
+              name: "Neon",
+              rounds: 1581,
+              pct: "11%",
+              rating: 1.12,
+              acs: 248,
+              kd: 1.2,
+              adr: 153,
+            },
+            {
+              name: "Yoru",
+              rounds: 813,
+              pct: "6%",
+              rating: 1.09,
+              acs: 230,
+              kd: 1.14,
+              adr: 145,
+            },
+          ],
+          overall: {
+            rating: 1.17,
+            acs: 245,
+            kd: 1.23,
+            adr: 158,
+          },
+        },
+        {
+          ign: "d4v41",
+          name: "Khalish Rusyaidee",
+          country: "Malaysia",
+          region: "APAC",
+          tier: "Tier 1",
+          team: "Paper Rex",
+          agents: [
+            {
+              name: "Skye",
+              rounds: 2554,
+              pct: "18%",
+              rating: 1.08,
+              acs: 198,
+              kd: 1.11,
+              adr: 127,
+            },
+            {
+              name: "Viper",
+              rounds: 2101,
+              pct: "15%",
+              rating: 1.03,
+              acs: 199,
+              kd: 1.07,
+              adr: 134,
+            },
+            {
+              name: "Jett",
+              rounds: 1879,
+              pct: "13%",
+              rating: 1.14,
+              acs: 255,
+              kd: 1.28,
+              adr: 155,
+            },
+            {
+              name: "Vyse",
+              rounds: 1361,
+              pct: "9%",
+              rating: 1.06,
+              acs: 200,
+              kd: 1.12,
+              adr: 136,
+            },
+            {
+              name: "Sage",
+              rounds: 1304,
+              pct: "9%",
+              rating: 1.15,
+              acs: 213,
+              kd: 1.25,
+              adr: 135,
+            },
+          ],
+          overall: {
+            rating: 1.08,
+            acs: 210,
+            kd: 1.15,
+            adr: 136,
+          },
+        },
+      ];
+      const CLUES = [
+        { key: "region", label: "Region", cost: 1 },
+        { key: "tier", label: "Circuit tier", cost: 1 },
+        { key: "country", label: "Country", cost: 1 },
+        { key: "team", label: "Team", cost: 2 },
+      ];
+      const MAX_SCORE = 10,
+        TOTAL_ROUNDS = 5,
+        LB_KEY = "vlrquiz_lb_v2";
+      const allIgns = PLAYERS.map((p) => p.ign);
+
+      let st = {
+        screen: "name",
+        playerName: "",
+        playerIdx: null,
+        usedClues: [],
+        score: MAX_SCORE,
+        feedback: null,
+        guess: "",
+        suggestions: [],
+        showSuggestions: false,
+        totalScore: 0,
+        round: 1,
+        roundScores: [],
+        usedIndices: [],
+        revealed: false,
+        tab: "quiz",
+        leaderboard: [],
+      };
+
+      function loadLB() {
+        try {
+          const r = localStorage.getItem(LB_KEY);
+          st.leaderboard = r ? JSON.parse(r) : [];
+        } catch (e) {
+          st.leaderboard = [];
+        }
+      }
+      function saveLB() {
+        try {
+          localStorage.setItem(LB_KEY, JSON.stringify(st.leaderboard));
+        } catch (e) {}
+      }
+      function submitScore(name, score) {
+        loadLB();
+        const idx = st.leaderboard.findIndex(
+          (x) => x.name.toLowerCase() === name.toLowerCase(),
+        );
+        if (idx >= 0) {
+          if (score > st.leaderboard[idx].score)
+            st.leaderboard[idx] = { name, score, ts: Date.now() };
+        } else st.leaderboard.push({ name, score, ts: Date.now() });
+        st.leaderboard.sort((a, b) => b.score - a.score);
+        st.leaderboard = st.leaderboard.slice(0, 50);
+        saveLB();
+      }
+      function pickPlayer() {
+        const avail = PLAYERS.map((_, i) => i).filter(
+          (i) => !st.usedIndices.includes(i),
+        );
+        if (!avail.length) return null;
+        return avail[Math.floor(Math.random() * avail.length)];
+      }
+      function startRound() {
+        const idx = pickPlayer();
+        if (idx === null) {
+          endGame();
+          return;
+        }
+        Object.assign(st, {
+          playerIdx: idx,
+          usedClues: [],
+          score: MAX_SCORE,
+          feedback: null,
+          guess: "",
+          suggestions: [],
+          showSuggestions: false,
+          revealed: false,
+        });
+        st.usedIndices.push(idx);
+        render();
+      }
+      function endGame() {
+        submitScore(st.playerName, st.totalScore);
+        loadLB();
+        st.screen = "result";
+        render();
+      }
+      function revealClue(key, cost) {
+        if (st.usedClues.includes(key) || st.revealed) return;
+        st.usedClues.push(key);
+        st.score = Math.max(0, st.score - cost);
+        st.feedback = null;
+        render();
+      }
+      function submitGuess() {
+        const p = PLAYERS[st.playerIdx];
+        const g = st.guess.trim().toLowerCase();
+        if (!g) return;
+        if (g === p.ign.toLowerCase() || g === p.name.toLowerCase()) {
+          st.feedback = {
+            type: "correct",
+            msg: "Correct! " + p.ign + " (" + p.name + ")",
+          };
+          st.totalScore += st.score;
+          st.roundScores.push(st.score);
+          st.revealed = true;
+          render();
+        } else {
+          st.score = Math.max(0, st.score - 1);
+          st.feedback = { type: "wrong", msg: "Nope. -1 point. Try again." };
+          st.guess = "";
+          st.suggestions = [];
+          render();
+        }
+      }
+      function giveUp() {
+        const p = PLAYERS[st.playerIdx];
+        st.feedback = {
+          type: "info",
+          msg: "It was " + p.ign + " (" + p.name + ")",
+        };
+        st.roundScores.push(0);
+        st.revealed = true;
+        render();
+      }
+      function nextRound() {
+        st.round++;
+        if (st.round > TOTAL_ROUNDS) {
+          endGame();
+          return;
+        }
+        startRound();
+      }
+      function onInput(val) {
+        st.guess = val;
+        const q = val.toLowerCase();
+        st.suggestions = q.length
+          ? allIgns.filter((n) => n.toLowerCase().includes(q)).slice(0, 6)
+          : [];
+        st.showSuggestions = st.suggestions.length > 0;
+        render();
+      }
+      function selectSugg(ign) {
+        st.guess = ign;
+        st.suggestions = [];
+        st.showSuggestions = false;
+        render();
+      }
+      function setTab(t) {
+        st.tab = t;
+        render();
+      }
+      function startGame() {
+        const n = (
+          document.getElementById("nameInput") || { value: st.playerName }
+        ).value.trim();
+        if (!n) return;
+        st.playerName = n;
+        st.screen = "quiz";
+        loadLB();
+        startRound();
+      }
+      function resetGame() {
+        Object.assign(st, {
+          screen: "name",
+          playerName: "",
+          playerIdx: null,
+          usedClues: [],
+          score: MAX_SCORE,
+          feedback: null,
+          guess: "",
+          suggestions: [],
+          showSuggestions: false,
+          totalScore: 0,
+          round: 1,
+          roundScores: [],
+          usedIndices: [],
+          revealed: false,
+          tab: "quiz",
+        });
+        render();
+      }
+
+      function render() {
+        const app = document.getElementById("app");
+        if (st.screen === "name") {
+          app.innerHTML = renderName();
+          focusName();
+          return;
+        }
+        if (st.screen === "result") {
+          app.innerHTML = renderResult();
+          return;
+        }
+        if (st.playerIdx === null) return;
+        const p = PLAYERS[st.playerIdx];
+        let h = "";
+        h += `<div class="quiz-header">
+    <div class="round-info">Round <b>${st.round}</b> / ${TOTAL_ROUNDS}</div>
+    <div class="score-display">
+      <div class="score-chip">Total <b>${st.totalScore}</b></div>
+      <div class="score-chip">This round <b>${st.score}</b></div>
+    </div>
+  </div>`;
+        h += `<div class="tabs">
+    <button class="tab-btn ${st.tab === "quiz" ? "active" : ""}" onclick="setTab('quiz')">Quiz</button>
+    <button class="tab-btn ${st.tab === "lb" ? "active" : ""}" onclick="setTab('lb')">Leaderboard</button>
+  </div>`;
+        if (st.tab === "lb") {
+          h += renderLB();
+          app.innerHTML = h;
+          return;
+        }
+        h += `<div class="section-label">Top agents — all time</div><div class="agent-grid">`;
+        for (const ag of p.agents) {
+          h += `<div class="agent-card">
+      <div class="agent-card-name">${ag.name}</div>
+      <div class="agent-stat-val">${ag.rating.toFixed(2)}</div>
+      <div class="agent-stat-label">Rating</div>
+      <div class="agent-stat-val">${ag.acs}</div>
+      <div class="agent-stat-label">ACS</div>
+      <div class="agent-stat-val">${ag.kd.toFixed(2)}</div>
+      <div class="agent-stat-label">K/D</div>
+      <div class="agent-use">${ag.pct} of rounds</div>
+      <div class="agent-rounds">${ag.rounds} rounds</div>
+    </div>`;
+        }
+        h += `</div><div class="section-label">Overall</div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="stat-box-label">Rating</div><div class="stat-box-val">${p.overall.rating.toFixed(2)}</div></div>
+    <div class="stat-box"><div class="stat-box-label">ACS</div><div class="stat-box-val">${p.overall.acs}</div></div>
+    <div class="stat-box"><div class="stat-box-label">K/D</div><div class="stat-box-val">${p.overall.kd.toFixed(2)}</div></div>
+    <div class="stat-box"><div class="stat-box-label">ADR</div><div class="stat-box-val">${p.overall.adr}</div></div>
+  </div>
+  <div class="clue-panel"><div class="clue-panel-header">Clues — each costs points</div>`;
+        for (const cl of CLUES) {
+          const used = st.usedClues.includes(cl.key) || st.revealed;
+          const val = {
+            region: p.region,
+            tier: p.tier,
+            country: p.country,
+            team: p.team,
+          }[cl.key];
+          if (used) {
+            h += `<div class="clue-row"><span class="clue-row-label">${cl.label}</span><span class="clue-row-value">${val}</span></div>`;
+          } else {
+            h += `<div class="clue-row"><span class="clue-row-label">${cl.label}</span>
+        <div class="clue-locked-row">
+          <button class="btn" style="padding:6px 14px;font-size:12px" onclick="revealClue('${cl.key}',${cl.cost})">Reveal</button>
+          <span class="cost-tag">-${cl.cost}pt</span>
+        </div></div>`;
+          }
+        }
+        h += `</div>`;
+        if (st.feedback)
+          h += `<div class="feedback ${st.feedback.type}">${st.feedback.msg}</div>`;
+        if (!st.revealed) {
+          const acHtml = st.showSuggestions
+            ? `<div class="ac-list">${st.suggestions.map((s) => `<div class="ac-item" onmousedown="event.preventDefault();selectSugg('${s}')">${s}</div>`).join("")}</div>`
+            : "";
+          h += `<div class="input-row">
+      <div class="autocomplete">
+        <input type="text" id="guessInput" placeholder="Type player IGN or name…" autocomplete="off" value="" oninput="onInput(this.value)" onkeydown="if(event.key==='Enter')submitGuess()">
+        ${acHtml}
+      </div>
+      <button class="btn btn-red" onclick="submitGuess()">Guess</button>
+      <button class="btn" onclick="giveUp()">Give up</button>
+    </div>`;
+        } else {
+          const rs = st.roundScores[st.roundScores.length - 1];
+          h += `<div style="margin-bottom:.75rem;font-size:14px;color:var(--muted)">You scored <span style="color:var(--red);font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700">${rs}</span>/10 this round.</div>
+    <button class="btn btn-red btn-full" onclick="nextRound()">${st.round < TOTAL_ROUNDS ? "Next player →" : "See final score →"}</button>`;
+        }
+        app.innerHTML = h;
+        if (!st.revealed) {
+          const inp = document.getElementById("guessInput");
+          if (inp) {
+            inp.value = st.guess;
+            inp.setSelectionRange(inp.value.length, inp.value.length);
+            inp.focus();
+          }
+        }
+      }
+
+      function renderName() {
+        return `<div class="splash">
+    <div class="splash-title">Guess the<br><span>Pro</span></div>
+    <div class="splash-sub">You'll see a player's agent stats — no name, no team, no flag. Use clues wisely. Each hint costs points.</div>
+    <div class="name-form">
+      <input type="text" id="nameInput" placeholder="Your name for the leaderboard…" onkeydown="if(event.key==='Enter')startGame()">
+      <button class="btn btn-red" onclick="startGame()">Play →</button>
+    </div>
+    <div style="margin-top:16px;font-size:12px;color:var(--muted)">${TOTAL_ROUNDS} rounds &nbsp;·&nbsp; 10 pts max per round &nbsp;·&nbsp; Leaderboard is local to this device</div>
+  </div>`;
+      }
+      function focusName() {
+        setTimeout(() => {
+          const el = document.getElementById("nameInput");
+          if (el) el.focus();
+        }, 50);
+      }
+
+      function renderResult() {
+        const max = TOTAL_ROUNDS * MAX_SCORE;
+        const pct = st.totalScore / max;
+        const verdict =
+          pct >= 0.8
+            ? "Elite analyst"
+            : pct >= 0.6
+              ? "Solid Valorant fan"
+              : pct >= 0.4
+                ? "Casual viewer"
+                : "New to the scene";
+        const chipColors = [
+          { t: "#4ade80", bg: "rgba(74,222,128,0.12)" },
+          { t: "#60a5fa", bg: "rgba(96,165,250,0.12)" },
+          { t: "#fbbf24", bg: "rgba(251,191,36,0.12)" },
+          { t: "var(--danger)", bg: "rgba(248,113,113,0.12)" },
+        ];
+        const getChip = (s) =>
+          s >= 8
+            ? chipColors[0]
+            : s >= 5
+              ? chipColors[1]
+              : s >= 2
+                ? chipColors[2]
+                : chipColors[3];
+        let h = `<div class="result-hero">
+    <div class="result-verdict">${verdict}</div>
+    <div class="result-big">${st.totalScore}<span class="result-denom">/${max}</span></div>
+    <div class="result-label">final score</div>
+    <div class="round-chips">`;
+        st.roundScores.forEach((s, i) => {
+          const c = getChip(s);
+          h += `<div class="round-chip" style="color:${c.t};background:${c.bg}">R${i + 1} &nbsp; ${s}</div>`;
+        });
+        h += `</div></div>`;
+        h += renderLB();
+        h += `<button class="btn btn-red btn-full" onclick="resetGame()">Play again</button>`;
+        return h;
+      }
+
+      function renderLB() {
+        const ranks = ["1st", "2nd", "3rd"];
+        const rankClass = (i) =>
+          i === 0 ? "gold" : i === 1 ? "silver" : i === 2 ? "bronze" : "";
+        let h = `<div class="lb-panel"><div class="lb-header"><span>Leaderboard</span><span>Score / ${TOTAL_ROUNDS * MAX_SCORE}</span></div>`;
+        if (!st.leaderboard.length) {
+          h += `<div class="empty-state">No scores yet. You'll be the first!</div>`;
+        } else {
+          st.leaderboard.slice(0, 15).forEach((e, i) => {
+            const isYou = e.name.toLowerCase() === st.playerName.toLowerCase();
+            h += `<div class="lb-row ${isYou ? "you" : ""}">
+        <span class="lb-rank ${rankClass(i)}">${ranks[i] || i + 1}</span>
+        <span class="lb-name">${e.name}</span>
+        ${isYou ? `<span class="lb-you-tag">you</span>` : ""}
+        <span class="lb-score">${e.score}</span>
+      </div>`;
+          });
+        }
+        return h + `</div>`;
+      }
+
+      window.revealClue = revealClue;
+      window.submitGuess = submitGuess;
+      window.giveUp = giveUp;
+      window.nextRound = nextRound;
+      window.onInput = onInput;
+      window.selectSugg = selectSugg;
+      window.resetGame = resetGame;
+      window.startGame = startGame;
+      window.setTab = setTab;
+      render();
+    </script>
+  </body>
+</html>
