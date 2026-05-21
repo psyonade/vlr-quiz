@@ -594,7 +594,7 @@
   <body>
     <nav>
       <div class="logo">VLR<span>.</span>Quiz</div>
-      <div class="nav-badge">Stats Upto 18 May 2025</div>
+      <div id="stats-banner" class="nav-badge">Loading stats...</div>
     </nav>
     <div class="diag-line"></div>
     <main>
@@ -602,497 +602,9 @@
         <div id="app"></div>
       </div>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-      const PLAYERS = [
-        {
-          ign: "nobody",
-          name: "Wang Senxu (王森旭)",
-          country: "China",
-          region: "CN",
-          tier: "Tier 1",
-          team: "EDward Gaming",
-          agents: [
-            {
-              name: "Sova",
-              rounds: 5002,
-              pct: "39%",
-              rating: 1.05,
-              acs: 206,
-              kd: 1.08,
-              adr: 136,
-            },
-            {
-              name: "Skye",
-              rounds: 2217,
-              pct: "17%",
-              rating: 0.96,
-              acs: 194,
-              kd: 1,
-              adr: 125,
-            },
-            {
-              name: "Fade",
-              rounds: 2080,
-              pct: "16%",
-              rating: 1.04,
-              acs: 195,
-              kd: 1.07,
-              adr: 129,
-            },
-            {
-              name: "Tejo",
-              rounds: 607,
-              pct: "5%",
-              rating: 0.9,
-              acs: 180,
-              kd: 0.91,
-              adr: 121,
-            },
-            {
-              name: "Cypher",
-              rounds: 535,
-              pct: "4%",
-              rating: 0.9,
-              acs: 198,
-              kd: 1.05,
-              adr: 121,
-            },
-          ],
-          overall: {
-            rating: 0.97,
-            acs: 199,
-            kd: 1.04,
-            adr: 129,
-          },
-        },
-        {
-          ign: "purp0",
-          name: "Semyon Borchev",
-          country: "Russia",
-          region: "EMEA",
-          tier: "Tier 1",
-          team: "Team Liquid",
-          agents: [
-            {
-              name: "Jett",
-              rounds: 2767,
-              pct: "34%",
-              rating: 1.31,
-              acs: 270,
-              kd: 1.48,
-              adr: 166,
-            },
-            {
-              name: "Raze",
-              rounds: 906,
-              pct: "11%",
-              rating: 1.15,
-              acs: 254,
-              kd: 1.19,
-              adr: 164,
-            },
-            {
-              name: "Skye",
-              rounds: 739,
-              pct: "9%",
-              rating: 1.14,
-              acs: 201,
-              kd: 1.26,
-              adr: 133,
-            },
-            {
-              name: "Cypher",
-              rounds: 693,
-              pct: "8%",
-              rating: 1.19,
-              acs: 204,
-              kd: 1.09,
-              adr: 144,
-            },
-            {
-              name: "Sova",
-              rounds: 613,
-              pct: "8%",
-              rating: 1.18,
-              acs: 217,
-              kd: 1.31,
-              adr: 138,
-            },
-          ],
-          overall: {
-            rating: 1.2,
-            acs: 237,
-            kd: 1.29,
-            adr: 152,
-          },
-        },
-        {
-          ign: "Sato",
-          name: "Eduardo Kenzo Nagahama Sato",
-          country: "Brazil",
-          region: "AMER",
-          tier: "Tier 1",
-          team: "LEVIATÁN",
-          agents: [
-            {
-              name: "Jett",
-              rounds: 3833,
-              pct: "51%",
-              rating: 1.18,
-              acs: 247,
-              kd: 1.29,
-              adr: 158,
-            },
-            {
-              name: "Raze",
-              rounds: 1267,
-              pct: "16%",
-              rating: 1.18,
-              acs: 260,
-              kd: 1.22,
-              adr: 171,
-            },
-            {
-              name: "Yoru",
-              rounds: 822,
-              pct: "11%",
-              rating: 1.23,
-              acs: 262,
-              kd: 1.35,
-              adr: 166,
-            },
-            {
-              name: "Neon",
-              rounds: 691,
-              pct: "9%",
-              rating: 1,
-              acs: 231,
-              kd: 1.05,
-              adr: 147,
-            },
-            {
-              name: "Waylay",
-              rounds: 307,
-              pct: "4%",
-              rating: 0.86,
-              acs: 197,
-              kd: 0.99,
-              adr: 126,
-            },
-          ],
-          overall: {
-            rating: 1.15,
-            acs: 246,
-            kd: 1.24,
-            adr: 158,
-          },
-        },
-        {
-          ign: "Meteor",
-          name: "Kim Tae-oh (김태오)",
-          country: "South korea",
-          region: "APAC",
-          tier: "Tier 1",
-          team: "T1",
-          agents: [
-            {
-              name: "Jett",
-              rounds: 2610,
-              pct: "28%",
-              rating: 1.09,
-              acs: 247,
-              kd: 1.17,
-              adr: 154,
-            },
-            {
-              name: "Killjoy",
-              rounds: 2125,
-              pct: "22%",
-              rating: 1.05,
-              acs: 219,
-              kd: 1.15,
-              adr: 147,
-            },
-            {
-              name: "Cypher",
-              rounds: 1092,
-              pct: "11%",
-              rating: 0.98,
-              acs: 205,
-              kd: 1.03,
-              adr: 135,
-            },
-            {
-              name: "Viper",
-              rounds: 816,
-              pct: "8%",
-              rating: 0.99,
-              acs: 214,
-              kd: 1.03,
-              adr: 140,
-            },
-            {
-              name: "Vyse",
-              rounds: 627,
-              pct: "6%",
-              rating: 1.02,
-              acs: 223,
-              kd: 1.05,
-              adr: 145,
-            },
-          ],
-          overall: {
-            rating: 1.04,
-            acs: 227,
-            kd: 1.12,
-            adr: 147,
-          },
-        },
-        {
-          ign: "Rarga",
-          name: "Arthur Churyumov",
-          country: "Russia",
-          region: "CN",
-          tier: "Tier 1",
-          team: "Xi Lai Gaming",
-          agents: [
-            {
-              name: "Neon",
-              rounds: 1804,
-              pct: "32%",
-              rating: 0.93,
-              acs: 241,
-              kd: 1.12,
-              adr: 136,
-            },
-            {
-              name: "Jett",
-              rounds: 1104,
-              pct: "18%",
-              rating: 1,
-              acs: 232,
-              kd: 1.05,
-              adr: 148,
-            },
-            {
-              name: "Yoru",
-              rounds: 1067,
-              pct: "19%",
-              rating: 1.07,
-              acs: 239,
-              kd: 1.14,
-              adr: 151,
-            },
-            {
-              name: "Raze",
-              rounds: 653,
-              pct: "12%",
-              rating: 1.13,
-              acs: 252,
-              kd: 1.18,
-              adr: 167,
-            },
-            {
-              name: "Chamber",
-              rounds: 241,
-              pct: "4%",
-              rating: 1.21,
-              acs: 241,
-              kd: 1.3,
-              adr: 159,
-            },
-          ],
-          overall: {
-            rating: 1.02,
-            acs: 240,
-            kd: 1.14,
-            adr: 147,
-          },
-        },
-        {
-          ign: "Chronicle",
-          name: "Timofey Khromov",
-          country: "Russia",
-          region: "EMEA",
-          tier: "Tier 1",
-          team: "Team Vitality",
-          agents: [
-            {
-              name: "Viper",
-              rounds: 2949,
-              pct: "22%",
-              rating: 1.16,
-              acs: 229,
-              kd: 1.22,
-              adr: 151,
-            },
-            {
-              name: "Sova",
-              rounds: 2929,
-              pct: "24%",
-              rating: 1.14,
-              acs: 213,
-              kd: 1.25,
-              adr: 140,
-            },
-            {
-              name: "Breach",
-              rounds: 1519,
-              pct: "12%",
-              rating: 1.13,
-              acs: 203,
-              kd: 1.17,
-              adr: 129,
-            },
-            {
-              name: "Chamber",
-              rounds: 750,
-              pct: "6%",
-              rating: 1.16,
-              acs: 228,
-              kd: 1.29,
-              adr: 148,
-            },
-            {
-              name: "Raze",
-              rounds: 646,
-              pct: "5%",
-              rating: 1.16,
-              acs: 269,
-              kd: 1.36,
-              adr: 163,
-            },
-          ],
-          overall: {
-            rating: 1.12,
-            acs: 219,
-            kd: 1.2,
-            adr: 143,
-          },
-        },
-        {
-          ign: "zekken",
-          name: "Zachary Patrone",
-          country: "United states",
-          region: "AMER",
-          tier: "Tier 1",
-          team: "MIBR",
-          agents: [
-            {
-              name: "Raze",
-              rounds: 5349,
-              pct: "37%",
-              rating: 1.16,
-              acs: 257,
-              kd: 1.23,
-              adr: 166,
-            },
-            {
-              name: "Sova",
-              rounds: 2565,
-              pct: "17%",
-              rating: 1.36,
-              acs: 256,
-              kd: 1.39,
-              adr: 168,
-            },
-            {
-              name: "Jett",
-              rounds: 1724,
-              pct: "12%",
-              rating: 1.12,
-              acs: 240,
-              kd: 1.19,
-              adr: 153,
-            },
-            {
-              name: "Neon",
-              rounds: 1581,
-              pct: "11%",
-              rating: 1.12,
-              acs: 248,
-              kd: 1.2,
-              adr: 153,
-            },
-            {
-              name: "Yoru",
-              rounds: 813,
-              pct: "6%",
-              rating: 1.09,
-              acs: 230,
-              kd: 1.14,
-              adr: 145,
-            },
-          ],
-          overall: {
-            rating: 1.17,
-            acs: 245,
-            kd: 1.23,
-            adr: 158,
-          },
-        },
-        {
-          ign: "d4v41",
-          name: "Khalish Rusyaidee",
-          country: "Malaysia",
-          region: "APAC",
-          tier: "Tier 1",
-          team: "Paper Rex",
-          agents: [
-            {
-              name: "Skye",
-              rounds: 2554,
-              pct: "18%",
-              rating: 1.08,
-              acs: 198,
-              kd: 1.11,
-              adr: 127,
-            },
-            {
-              name: "Viper",
-              rounds: 2101,
-              pct: "15%",
-              rating: 1.03,
-              acs: 199,
-              kd: 1.07,
-              adr: 134,
-            },
-            {
-              name: "Jett",
-              rounds: 1879,
-              pct: "13%",
-              rating: 1.14,
-              acs: 255,
-              kd: 1.28,
-              adr: 155,
-            },
-            {
-              name: "Vyse",
-              rounds: 1361,
-              pct: "9%",
-              rating: 1.06,
-              acs: 200,
-              kd: 1.12,
-              adr: 136,
-            },
-            {
-              name: "Sage",
-              rounds: 1304,
-              pct: "9%",
-              rating: 1.15,
-              acs: 213,
-              kd: 1.25,
-              adr: 135,
-            },
-          ],
-          overall: {
-            rating: 1.08,
-            acs: 210,
-            kd: 1.15,
-            adr: 136,
-          },
-        },
-      ];
+      let PLAYERS = [];
       const CLUES = [
         { key: "region", label: "Region", cost: 1 },
         { key: "tier", label: "Circuit tier", cost: 1 },
@@ -1102,7 +614,12 @@
       const MAX_SCORE = 10,
         TOTAL_ROUNDS = 5,
         LB_KEY = "vlrquiz_lb_v2";
-      const allIgns = PLAYERS.map((p) => p.ign);
+      let allIgns = [], allNames = [];
+
+      // Supabase Configuration - Placeholders
+      const SUPABASE_URL = 'https://your-project-id.supabase.co';
+      const SUPABASE_KEY = 'your-anon-key';
+      const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
       let st = {
         screen: "name",
@@ -1123,33 +640,67 @@
         leaderboard: [],
       };
 
-      function loadLB() {
-        try {
-          const r = localStorage.getItem(LB_KEY);
-          st.leaderboard = r ? JSON.parse(r) : [];
-        } catch (e) {
-          st.leaderboard = [];
+      async function loadLB() {
+        if (!supabase) {
+            try {
+                const r = localStorage.getItem(LB_KEY);
+                st.leaderboard = r ? JSON.parse(r) : [];
+            } catch (e) {
+                st.leaderboard = [];
+            }
+            return;
+        }
+
+        const { data, error } = await supabase
+            .from('leaderboard')
+            .select('*')
+            .order('score', { ascending: false })
+            .limit(50);
+
+        if (!error) {
+            st.leaderboard = data;
+            render();
         }
       }
-      function saveLB() {
-        try {
-          localStorage.setItem(LB_KEY, JSON.stringify(st.leaderboard));
-        } catch (e) {}
+
+      async function submitScore(name, score) {
+        if (!supabase) {
+            const idx = st.leaderboard.findIndex(
+                (x) => x.name.toLowerCase() === name.toLowerCase(),
+            );
+            if (idx >= 0) {
+                if (score > st.leaderboard[idx].score)
+                    st.leaderboard[idx] = { name, score, ts: Date.now() };
+            } else st.leaderboard.push({ name, score, ts: Date.now() });
+            st.leaderboard.sort((a, b) => b.score - a.score);
+            st.leaderboard = st.leaderboard.slice(0, 50);
+            localStorage.setItem(LB_KEY, JSON.stringify(st.leaderboard));
+            return;
+        }
+
+        const { error } = await supabase
+            .from('leaderboard')
+            .upsert({ name, score, ts: new Date().toISOString() }, { onConflict: 'name' });
+
+        await loadLB();
       }
-      function submitScore(name, score) {
-        loadLB();
-        const idx = st.leaderboard.findIndex(
-          (x) => x.name.toLowerCase() === name.toLowerCase(),
-        );
-        if (idx >= 0) {
-          if (score > st.leaderboard[idx].score)
-            st.leaderboard[idx] = { name, score, ts: Date.now() };
-        } else st.leaderboard.push({ name, score, ts: Date.now() });
-        st.leaderboard.sort((a, b) => b.score - a.score);
-        st.leaderboard = st.leaderboard.slice(0, 50);
-        saveLB();
+
+      async function submitSuggestion() {
+        const input = document.getElementById('suggInput');
+        const text = input.value.trim();
+        if (!text || !supabase) return;
+
+        const { error } = await supabase
+            .from('suggestions')
+            .insert({ text, player_name: st.playerName, ts: new Date().toISOString() });
+
+        if (!error) {
+            input.value = '';
+            alert('Thanks for your suggestion!');
+        }
       }
       function pickPlayer() {
+        if (PLAYERS.length === 0) return null;
         const avail = PLAYERS.map((_, i) => i).filter(
           (i) => !st.usedIndices.includes(i),
         );
@@ -1230,10 +781,18 @@
       function onInput(val) {
         st.guess = val;
         const q = val.toLowerCase();
-        st.suggestions = q.length
-          ? allIgns.filter((n) => n.toLowerCase().includes(q)).slice(0, 6)
-          : [];
-        st.showSuggestions = st.suggestions.length > 0;
+        if (!q.length) {
+            st.suggestions = [];
+            st.showSuggestions = false;
+        } else {
+            const suggs = new Set();
+            PLAYERS.forEach(p => {
+                if (p.ign.toLowerCase().includes(q)) suggs.add(p.ign);
+                if (p.name.toLowerCase().includes(q)) suggs.add(p.ign); // Suggest IGN even if searching by name
+            });
+            st.suggestions = Array.from(suggs).slice(0, 6);
+            st.showSuggestions = st.suggestions.length > 0;
+        }
         render();
       }
       function selectSugg(ign) {
@@ -1244,8 +803,28 @@
       }
       function setTab(t) {
         st.tab = t;
+        if (t === 'lb') loadLB();
         render();
       }
+      async function init() {
+        try {
+          const res = await fetch('data/players.json');
+          const data = await res.json();
+          PLAYERS = data.players;
+          allIgns = PLAYERS.map(p => p.ign);
+          allNames = PLAYERS.map(p => p.name);
+
+          const banner = document.getElementById('stats-banner');
+          if (banner) {
+            const date = new Date(data.updatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+            banner.textContent = `Stats Upto ${date}`;
+          }
+        } catch (e) {
+          console.error("Failed to load players", e);
+        }
+        render();
+      }
+
       function startGame() {
         const n = (
           document.getElementById("nameInput") || { value: st.playerName }
@@ -1317,7 +896,7 @@
       <div class="agent-stat-label">ACS</div>
       <div class="agent-stat-val">${ag.kd.toFixed(2)}</div>
       <div class="agent-stat-label">K/D</div>
-      <div class="agent-use">${ag.pct} of rounds</div>
+      <div class="agent-use">${ag.matches || 0} (${ag.pct})</div>
       <div class="agent-rounds">${ag.rounds} rounds</div>
     </div>`;
         }
@@ -1454,7 +1033,19 @@
       </div>`;
           });
         }
-        return h + `</div>`;
+        h += `</div>`;
+
+        if (supabase) {
+          h += `<div class="clue-panel" style="margin-top:2rem">
+            <div class="clue-panel-header">Suggestions Box</div>
+            <div style="padding:16px; display:flex; gap:8px">
+              <input type="text" id="suggInput" placeholder="Feature request or player suggestion..." style="flex:1">
+              <button class="btn btn-red" onclick="submitSuggestion()">Send</button>
+            </div>
+          </div>`;
+        }
+
+        return h;
       }
 
       window.revealClue = revealClue;
@@ -1466,7 +1057,8 @@
       window.resetGame = resetGame;
       window.startGame = startGame;
       window.setTab = setTab;
-      render();
+      window.submitSuggestion = submitSuggestion;
+      init();
     </script>
   </body>
 </html>
