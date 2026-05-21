@@ -5,6 +5,9 @@ on:
     - cron: '0 0 * * 0' # Weekly on Sunday at midnight
   workflow_dispatch: # Allow manual trigger
 
+permissions:
+  contents: write
+
 jobs:
   update-stats:
     runs-on: ubuntu-latest
@@ -27,6 +30,11 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add data/players.json
-          git commit -m "chore: update player stats [skip ci]" || echo "No changes to commit"
-          git push
+
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git add data/players.json
+            git commit -m "chore: update player stats [skip ci]"
+            git push
+          else
+            echo "No changes to commit"
+          fi
