@@ -589,6 +589,38 @@
         );
         opacity: 0.4;
       }
+      .fab {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: var(--red);
+        color: white;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        cursor: pointer;
+        z-index: 100;
+        transition: transform 0.2s;
+      }
+      .fab:hover { transform: scale(1.05); }
+      .fab-modal {
+        position: fixed;
+        bottom: 6rem;
+        right: 2rem;
+        width: 320px;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        z-index: 101;
+        display: none;
+      }
+      .fab-modal.active { display: block; }
     </style>
   </head>
   <body>
@@ -602,6 +634,16 @@
         <div id="app"></div>
       </div>
     </main>
+    <div id="feedback-fab" class="fab" onclick="toggleFeedback()" title="Feedback">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+    </div>
+    <div id="feedback-modal" class="fab-modal">
+        <div class="clue-panel-header" style="margin: -1.5rem -1.5rem 1rem; border-radius: 8px 8px 0 0">Feedback / Suggestions</div>
+        <div style="display:flex; flex-direction:column; gap:12px">
+            <textarea id="suggInput" placeholder="Feature request or player suggestion..." style="width:100%; height:100px; background:var(--bg3); border:1px solid var(--border2); color:var(--text); padding:10px; border-radius:4px; font-family:inherit; resize:none"></textarea>
+            <button class="btn btn-red btn-full" onclick="submitSuggestion()">Send Feedback</button>
+        </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
       let PLAYERS = [];
@@ -613,13 +655,26 @@
       ];
       const MAX_SCORE = 10,
         TOTAL_ROUNDS = 5,
-        LB_KEY = "vlrquiz_lb_v2";
+        LB_KEY = "vlrquiz_lb_v2",
+        SEEN_KEY = "vlrquiz_seen_players";
       let allIgns = [], allNames = [];
 
       // Supabase Configuration
       const SUPABASE_URL = 'https://wtmhdldbwywdhqbyznil.supabase.co';
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0bWhkbGRid3l3ZGhxYnl6bmlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjg4MTAsImV4cCI6MjA5NDk0NDgxMH0.Dwsn-x7CiphYKZGxr00rC-KQzzxsxvN4w6AM4L_cEoY';
       const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+      function getSeenPlayers() {
+        try { return JSON.parse(localStorage.getItem(SEEN_KEY) || "[]"); }
+        catch (e) { return []; }
+      }
+      function markAsSeen(ign) {
+        const seen = getSeenPlayers();
+        if (!seen.includes(ign)) {
+          seen.push(ign);
+          localStorage.setItem(SEEN_KEY, JSON.stringify(seen));
+        }
+      }
 
       let st = {
         screen: "name",
@@ -678,11 +733,13 @@
             return;
         }
 
-        const { error } = await supabaseClient
-            .from('leaderboard')
-            .upsert({ name, score, ts: new Date().toISOString() }, { onConflict: 'name' });
-
-        await loadLB();
+        try {
+            await supabaseClient
+                .from('leaderboard')
+                .upsert({ name, score, ts: new Date().toISOString() }, { onConflict: 'name' });
+        } catch (e) {
+            console.error("Score submission failed", e);
+        }
       }
 
       async function submitSuggestion() {
@@ -692,20 +749,42 @@
 
         const { error } = await supabaseClient
             .from('suggestions')
-            .insert({ text, player_name: st.playerName, ts: new Date().toISOString() });
+            .insert({ text, player_name: st.playerName || 'Anonymous', ts: new Date().toISOString() });
 
         if (!error) {
             input.value = '';
+            toggleFeedback();
             alert('Thanks for your suggestion!');
+        }
+      }
+
+      function toggleFeedback() {
+        const modal = document.getElementById('feedback-modal');
+        modal.classList.toggle('active');
+        if (modal.classList.contains('active')) {
+            document.getElementById('suggInput').focus();
         }
       }
       function pickPlayer() {
         if (PLAYERS.length === 0) return null;
-        const avail = PLAYERS.map((_, i) => i).filter(
-          (i) => !st.usedIndices.includes(i),
+
+        let avail = PLAYERS.map((_, i) => i).filter(
+          (i) => !st.usedIndices.includes(i)
         );
+
         if (!avail.length) return null;
-        return avail[Math.floor(Math.random() * avail.length)];
+
+        const seen = getSeenPlayers();
+        const unseen = avail.filter(i => !seen.includes(PLAYERS[i].ign));
+
+        let candidates = unseen.length > 0 ? unseen : avail;
+
+        // Reset seen if we ran out of unseen players in the whole pool
+        if (unseen.length === 0 && seen.length >= PLAYERS.length) {
+            localStorage.setItem(SEEN_KEY, "[]");
+        }
+
+        return candidates[Math.floor(Math.random() * candidates.length)];
       }
       function startRound() {
         const idx = pickPlayer();
@@ -726,14 +805,22 @@
         st.usedIndices.push(idx);
         render();
       }
-      function endGame() {
-        submitScore(st.playerName, st.totalScore);
-        loadLB();
+      async function endGame() {
         st.screen = "result";
         render();
+        await submitScore(st.playerName, st.totalScore);
+        await loadLB();
       }
       function revealClue(key, cost) {
         if (st.usedClues.includes(key) || st.revealed) return;
+
+        // Enforce sequential revealing
+        const clueIdx = CLUES.findIndex(c => c.key === key);
+        if (clueIdx > 0) {
+            const prevClue = CLUES[clueIdx - 1];
+            if (!st.usedClues.includes(prevClue.key)) return;
+        }
+
         st.usedClues.push(key);
         st.score = Math.max(0, st.score - cost);
         st.feedback = null;
@@ -751,10 +838,10 @@
           st.totalScore += st.score;
           st.roundScores.push(st.score);
           st.revealed = true;
+          markAsSeen(p.ign);
           render();
         } else {
-          st.score = Math.max(0, st.score - 1);
-          st.feedback = { type: "wrong", msg: "Nope. -1 point. Try again." };
+          st.feedback = { type: "wrong", msg: "Nope. Try again." };
           st.guess = "";
           st.suggestions = [];
           render();
@@ -768,6 +855,7 @@
         };
         st.roundScores.push(0);
         st.revealed = true;
+        markAsSeen(p.ign);
         render();
       }
       function nextRound() {
@@ -781,7 +869,7 @@
       function onInput(val) {
         st.guess = val;
         const q = val.toLowerCase();
-        if (!q.length) {
+        if (q.length < 3) {
             st.suggestions = [];
             st.showSuggestions = false;
         } else {
@@ -817,7 +905,7 @@
           const banner = document.getElementById('stats-banner');
           if (banner) {
             const date = new Date(data.updatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-            banner.textContent = `Stats Upto ${date}`;
+            banner.textContent = `Stats Upto ${date} (${PLAYERS.length} players)`;
           }
         } catch (e) {
           console.error("Failed to load players", e);
@@ -907,9 +995,10 @@
     <div class="stat-box"><div class="stat-box-label">K/D</div><div class="stat-box-val">${p.overall.kd.toFixed(2)}</div></div>
     <div class="stat-box"><div class="stat-box-label">ADR</div><div class="stat-box-val">${p.overall.adr}</div></div>
   </div>
-  <div class="clue-panel"><div class="clue-panel-header">Clues — each costs points</div>`;
-        for (const cl of CLUES) {
+  <div class="clue-panel"><div class="clue-panel-header">Clues — reveal in order</div>`;
+        CLUES.forEach((cl, idx) => {
           const used = st.usedClues.includes(cl.key) || st.revealed;
+          const prevUsed = idx === 0 || st.usedClues.includes(CLUES[idx-1].key);
           const val = {
             region: p.region,
             tier: p.tier,
@@ -921,11 +1010,11 @@
           } else {
             h += `<div class="clue-row"><span class="clue-row-label">${cl.label}</span>
         <div class="clue-locked-row">
-          <button class="btn" style="padding:6px 14px;font-size:12px" onclick="revealClue('${cl.key}',${cl.cost})">Reveal</button>
+          ${prevUsed ? `<button class="btn" style="padding:6px 14px;font-size:12px" onclick="revealClue('${cl.key}',${cl.cost})">Reveal</button>` : `<span class="cost-tag" style="background:none;border-color:var(--border2);color:var(--muted)">Locked</span>`}
           <span class="cost-tag">-${cl.cost}pt</span>
         </div></div>`;
           }
-        }
+        });
         h += `</div>`;
         if (st.feedback)
           h += `<div class="feedback ${st.feedback.type}">${st.feedback.msg}</div>`;
@@ -1035,16 +1124,6 @@
         }
         h += `</div>`;
 
-        if (supabaseClient) {
-          h += `<div class="clue-panel" style="margin-top:2rem">
-            <div class="clue-panel-header">Suggestions Box</div>
-            <div style="padding:16px; display:flex; gap:8px">
-              <input type="text" id="suggInput" placeholder="Feature request or player suggestion..." style="flex:1">
-              <button class="btn btn-red" onclick="submitSuggestion()">Send</button>
-            </div>
-          </div>`;
-        }
-
         return h;
       }
 
@@ -1058,6 +1137,7 @@
       window.startGame = startGame;
       window.setTab = setTab;
       window.submitSuggestion = submitSuggestion;
+      window.toggleFeedback = toggleFeedback;
       init();
     </script>
   </body>
