@@ -619,7 +619,7 @@
       // Supabase Configuration
       const SUPABASE_URL = 'https://wtmhdldbwywdhqbyznil.supabase.co';
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0bWhkbGRid3l3ZGhxYnl6bmlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjg4MTAsImV4cCI6MjA5NDk0NDgxMH0.Dwsn-x7CiphYKZGxr00rC-KQzzxsxvN4w6AM4L_cEoY';
-      const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+      const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
       let st = {
         screen: "name",
@@ -641,7 +641,7 @@
       };
 
       async function loadLB() {
-        if (!supabase) {
+        if (!supabaseClient) {
             try {
                 const r = localStorage.getItem(LB_KEY);
                 st.leaderboard = r ? JSON.parse(r) : [];
@@ -651,7 +651,7 @@
             return;
         }
 
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('leaderboard')
             .select('*')
             .order('score', { ascending: false })
@@ -664,7 +664,7 @@
       }
 
       async function submitScore(name, score) {
-        if (!supabase) {
+        if (!supabaseClient) {
             const idx = st.leaderboard.findIndex(
                 (x) => x.name.toLowerCase() === name.toLowerCase(),
             );
@@ -678,7 +678,7 @@
             return;
         }
 
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('leaderboard')
             .upsert({ name, score, ts: new Date().toISOString() }, { onConflict: 'name' });
 
@@ -688,9 +688,9 @@
       async function submitSuggestion() {
         const input = document.getElementById('suggInput');
         const text = input.value.trim();
-        if (!text || !supabase) return;
+        if (!text || !supabaseClient) return;
 
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('suggestions')
             .insert({ text, player_name: st.playerName, ts: new Date().toISOString() });
 
@@ -1035,7 +1035,7 @@
         }
         h += `</div>`;
 
-        if (supabase) {
+        if (supabaseClient) {
           h += `<div class="clue-panel" style="margin-top:2rem">
             <div class="clue-panel-header">Suggestions Box</div>
             <div style="padding:16px; display:flex; gap:8px">
