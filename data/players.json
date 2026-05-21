@@ -1,0 +1,605 @@
+{
+  "updatedAt": "2026-05-18T21:39:29.460Z",
+  "players": [
+    {
+      "ign": "nobody",
+      "name": "Wang Senxu (王森旭)",
+      "country": "China",
+      "region": "CN",
+      "tier": "Tier 1",
+      "team": "EDward Gaming",
+      "agents": [
+        {
+          "name": "Sova",
+          "matches": 217,
+          "rounds": 5002,
+          "pct": "39%",
+          "rating": 1.05,
+          "acs": 206,
+          "kd": 1.08,
+          "adr": 136
+        },
+        {
+          "name": "Skye",
+          "matches": 96,
+          "rounds": 2217,
+          "pct": "17%",
+          "rating": 0.96,
+          "acs": 194,
+          "kd": 1,
+          "adr": 125
+        },
+        {
+          "name": "Fade",
+          "matches": 91,
+          "rounds": 2080,
+          "pct": "16%",
+          "rating": 1.04,
+          "acs": 195,
+          "kd": 1.07,
+          "adr": 129
+        },
+        {
+          "name": "Tejo",
+          "matches": 26,
+          "rounds": 607,
+          "pct": "5%",
+          "rating": 0.9,
+          "acs": 180,
+          "kd": 0.91,
+          "adr": 121
+        },
+        {
+          "name": "Cypher",
+          "matches": 23,
+          "rounds": 535,
+          "pct": "4%",
+          "rating": 0.9,
+          "acs": 198,
+          "kd": 1.05,
+          "adr": 121
+        }
+      ],
+      "overall": {
+        "rating": 0.97,
+        "acs": 199,
+        "kd": 1.04,
+        "adr": 129
+      }
+    },
+    {
+      "ign": "purp0",
+      "name": "Semyon Borchev",
+      "country": "Russia",
+      "region": "EMEA",
+      "tier": "Tier 1",
+      "team": "Team Liquid",
+      "agents": [
+        {
+          "name": "Jett",
+          "matches": 120,
+          "rounds": 2767,
+          "pct": "34%",
+          "rating": 1.31,
+          "acs": 270,
+          "kd": 1.48,
+          "adr": 166
+        },
+        {
+          "name": "Raze",
+          "matches": 39,
+          "rounds": 906,
+          "pct": "11%",
+          "rating": 1.15,
+          "acs": 254,
+          "kd": 1.19,
+          "adr": 164
+        },
+        {
+          "name": "Skye",
+          "matches": 32,
+          "rounds": 739,
+          "pct": "9%",
+          "rating": 1.14,
+          "acs": 201,
+          "kd": 1.26,
+          "adr": 133
+        },
+        {
+          "name": "Cypher",
+          "matches": 30,
+          "rounds": 693,
+          "pct": "8%",
+          "rating": 1.19,
+          "acs": 204,
+          "kd": 1.09,
+          "adr": 144
+        },
+        {
+          "name": "Sova",
+          "matches": 26,
+          "rounds": 613,
+          "pct": "8%",
+          "rating": 1.18,
+          "acs": 217,
+          "kd": 1.31,
+          "adr": 138
+        }
+      ],
+      "overall": {
+        "rating": 1.2,
+        "acs": 237,
+        "kd": 1.29,
+        "adr": 152
+      }
+    },
+    {
+      "ign": "Sato",
+      "name": "Eduardo Kenzo Nagahama Sato",
+      "country": "Brazil",
+      "region": "AMER",
+      "tier": "Tier 1",
+      "team": "LEVIATÁN",
+      "agents": [
+        {
+          "name": "Jett",
+          "matches": 150,
+          "rounds": 3833,
+          "pct": "51%",
+          "rating": 1.18,
+          "acs": 247,
+          "kd": 1.29,
+          "adr": 158
+        },
+        {
+          "name": "Raze",
+          "matches": 45,
+          "rounds": 1267,
+          "pct": "16%",
+          "rating": 1.18,
+          "acs": 260,
+          "kd": 1.22,
+          "adr": 171
+        },
+        {
+          "name": "Yoru",
+          "matches": 28,
+          "rounds": 822,
+          "pct": "11%",
+          "rating": 1.23,
+          "acs": 262,
+          "kd": 1.35,
+          "adr": 166
+        },
+        {
+          "name": "Neon",
+          "matches": 25,
+          "rounds": 691,
+          "pct": "9%",
+          "rating": 1,
+          "acs": 231,
+          "kd": 1.05,
+          "adr": 147
+        },
+        {
+          "name": "Waylay",
+          "matches": 12,
+          "rounds": 307,
+          "pct": "4%",
+          "rating": 0.86,
+          "acs": 197,
+          "kd": 0.99,
+          "adr": 126
+        }
+      ],
+      "overall": {
+        "rating": 1.15,
+        "acs": 246,
+        "kd": 1.24,
+        "adr": 158
+      }
+    },
+    {
+      "ign": "Meteor",
+      "name": "Kim Tae-oh (김태오)",
+      "country": "South Korea",
+      "region": "APAC",
+      "tier": "Tier 1",
+      "team": "T1",
+      "agents": [
+        {
+          "name": "Jett",
+          "matches": 98,
+          "rounds": 2610,
+          "pct": "28%",
+          "rating": 1.09,
+          "acs": 247,
+          "kd": 1.17,
+          "adr": 154
+        },
+        {
+          "name": "Killjoy",
+          "matches": 84,
+          "rounds": 2125,
+          "pct": "22%",
+          "rating": 1.05,
+          "acs": 219,
+          "kd": 1.15,
+          "adr": 147
+        },
+        {
+          "name": "Cypher",
+          "matches": 41,
+          "rounds": 1092,
+          "pct": "11%",
+          "rating": 0.98,
+          "acs": 205,
+          "kd": 1.03,
+          "adr": 135
+        },
+        {
+          "name": "Viper",
+          "matches": 33,
+          "rounds": 816,
+          "pct": "8%",
+          "rating": 0.99,
+          "acs": 214,
+          "kd": 1.03,
+          "adr": 140
+        },
+        {
+          "name": "Vyse",
+          "matches": 22,
+          "rounds": 627,
+          "pct": "6%",
+          "rating": 1.02,
+          "acs": 223,
+          "kd": 1.05,
+          "adr": 145
+        }
+      ],
+      "overall": {
+        "rating": 1.04,
+        "acs": 227,
+        "kd": 1.12,
+        "adr": 147
+      }
+    },
+    {
+      "ign": "Chronicle",
+      "name": "Timofey Khromov",
+      "country": "Russia",
+      "region": "EMEA",
+      "tier": "Tier 1",
+      "team": "Team Vitality",
+      "agents": [
+        {
+          "name": "Viper",
+          "matches": 115,
+          "rounds": 2949,
+          "pct": "22%",
+          "rating": 1.16,
+          "acs": 229,
+          "kd": 1.22,
+          "adr": 151
+        },
+        {
+          "name": "Sova",
+          "matches": 112,
+          "rounds": 2929,
+          "pct": "24%",
+          "rating": 1.14,
+          "acs": 213,
+          "kd": 1.25,
+          "adr": 140
+        },
+        {
+          "name": "Breach",
+          "matches": 62,
+          "rounds": 1519,
+          "pct": "12%",
+          "rating": 1.13,
+          "acs": 203,
+          "kd": 1.17,
+          "adr": 129
+        },
+        {
+          "name": "Chamber",
+          "matches": 30,
+          "rounds": 750,
+          "pct": "6%",
+          "rating": 1.16,
+          "acs": 228,
+          "kd": 1.29,
+          "adr": 148
+        },
+        {
+          "name": "Raze",
+          "matches": 25,
+          "rounds": 646,
+          "pct": "5%",
+          "rating": 1.16,
+          "acs": 269,
+          "kd": 1.36,
+          "adr": 163
+        }
+      ],
+      "overall": {
+        "rating": 1.12,
+        "acs": 219,
+        "kd": 1.2,
+        "adr": 143
+      }
+    },
+    {
+      "ign": "zekken",
+      "name": "Zachary Patrone",
+      "country": "United States",
+      "region": "AMER",
+      "tier": "Tier 1",
+      "team": "Sentinels",
+      "agents": [
+        {
+          "name": "Raze",
+          "matches": 198,
+          "rounds": 5349,
+          "pct": "37%",
+          "rating": 1.16,
+          "acs": 257,
+          "kd": 1.23,
+          "adr": 166
+        },
+        {
+          "name": "Sova",
+          "matches": 96,
+          "rounds": 2565,
+          "pct": "17%",
+          "rating": 1.36,
+          "acs": 256,
+          "kd": 1.39,
+          "adr": 168
+        },
+        {
+          "name": "Jett",
+          "matches": 65,
+          "rounds": 1724,
+          "pct": "12%",
+          "rating": 1.12,
+          "acs": 240,
+          "kd": 1.19,
+          "adr": 153
+        },
+        {
+          "name": "Neon",
+          "matches": 58,
+          "rounds": 1581,
+          "pct": "11%",
+          "rating": 1.12,
+          "acs": 248,
+          "kd": 1.2,
+          "adr": 153
+        },
+        {
+          "name": "Yoru",
+          "matches": 30,
+          "rounds": 813,
+          "pct": "6%",
+          "rating": 1.09,
+          "acs": 230,
+          "kd": 1.14,
+          "adr": 145
+        }
+      ],
+      "overall": {
+        "rating": 1.17,
+        "acs": 245,
+        "kd": 1.23,
+        "adr": 158
+      }
+    },
+    {
+      "ign": "d4v41",
+      "name": "Khalish Rusyaidee",
+      "country": "Malaysia",
+      "region": "APAC",
+      "tier": "Tier 1",
+      "team": "Paper Rex",
+      "agents": [
+        {
+          "name": "Skye",
+          "matches": 102,
+          "rounds": 2554,
+          "pct": "18%",
+          "rating": 1.08,
+          "acs": 198,
+          "kd": 1.11,
+          "adr": 127
+        },
+        {
+          "name": "Viper",
+          "matches": 84,
+          "rounds": 2101,
+          "pct": "15%",
+          "rating": 1.03,
+          "acs": 199,
+          "kd": 1.07,
+          "adr": 134
+        },
+        {
+          "name": "Jett",
+          "matches": 75,
+          "rounds": 1879,
+          "pct": "13%",
+          "rating": 1.14,
+          "acs": 255,
+          "kd": 1.28,
+          "adr": 155
+        },
+        {
+          "name": "Vyse",
+          "matches": 53,
+          "rounds": 1361,
+          "pct": "9%",
+          "rating": 1.06,
+          "acs": 200,
+          "kd": 1.12,
+          "adr": 136
+        },
+        {
+          "name": "Sage",
+          "matches": 51,
+          "rounds": 1304,
+          "pct": "9%",
+          "rating": 1.15,
+          "acs": 213,
+          "kd": 1.25,
+          "adr": 135
+        }
+      ],
+      "overall": {
+        "rating": 1.08,
+        "acs": 210,
+        "kd": 1.15,
+        "adr": 136
+      }
+    },
+    {
+      "ign": "Aspas",
+      "name": "Erick Santos",
+      "country": "Brazil",
+      "region": "AMER",
+      "tier": "Tier 1",
+      "team": "Leviatán",
+      "agents": [
+        {
+          "name": "Jett",
+          "matches": 250,
+          "rounds": 6500,
+          "pct": "45%",
+          "rating": 1.25,
+          "acs": 260,
+          "kd": 1.45,
+          "adr": 165
+        },
+        {
+          "name": "Raze",
+          "matches": 85,
+          "rounds": 2100,
+          "pct": "15%",
+          "rating": 1.15,
+          "acs": 250,
+          "kd": 1.25,
+          "adr": 155
+        },
+        {
+          "name": "Neon",
+          "matches": 45,
+          "rounds": 1100,
+          "pct": "8%",
+          "rating": 1.1,
+          "acs": 240,
+          "kd": 1.2,
+          "adr": 150
+        }
+      ],
+      "overall": {
+        "rating": 1.21,
+        "acs": 255,
+        "kd": 1.38,
+        "adr": 162
+      }
+    },
+    {
+      "ign": "Less",
+      "name": "Felipe Basso",
+      "country": "Brazil",
+      "region": "AMER",
+      "tier": "Tier 1",
+      "team": "LOUD",
+      "agents": [
+        {
+          "name": "Viper",
+          "matches": 180,
+          "rounds": 4500,
+          "pct": "40%",
+          "rating": 1.15,
+          "acs": 220,
+          "kd": 1.2,
+          "adr": 145
+        },
+        {
+          "name": "Killjoy",
+          "matches": 120,
+          "rounds": 3000,
+          "pct": "25%",
+          "rating": 1.1,
+          "acs": 210,
+          "kd": 1.15,
+          "adr": 140
+        },
+        {
+          "name": "Cypher",
+          "matches": 95,
+          "rounds": 2400,
+          "pct": "20%",
+          "rating": 1.05,
+          "acs": 205,
+          "kd": 1.1,
+          "adr": 135
+        }
+      ],
+      "overall": {
+        "rating": 1.12,
+        "acs": 215,
+        "kd": 1.18,
+        "adr": 142
+      }
+    },
+    {
+      "ign": "Boaster",
+      "name": "Jake Howlett",
+      "country": "United Kingdom",
+      "region": "EMEA",
+      "tier": "Tier 1",
+      "team": "Fnatic",
+      "agents": [
+        {
+          "name": "Omen",
+          "matches": 150,
+          "rounds": 3800,
+          "pct": "35%",
+          "rating": 0.95,
+          "acs": 180,
+          "kd": 0.95,
+          "adr": 120
+        },
+        {
+          "name": "Astra",
+          "matches": 120,
+          "rounds": 3000,
+          "pct": "28%",
+          "rating": 0.98,
+          "acs": 185,
+          "kd": 1,
+          "adr": 125
+        },
+        {
+          "name": "Brimstone",
+          "matches": 80,
+          "rounds": 2000,
+          "pct": "18%",
+          "rating": 0.92,
+          "acs": 175,
+          "kd": 0.9,
+          "adr": 115
+        }
+      ],
+      "overall": {
+        "rating": 0.96,
+        "acs": 182,
+        "kd": 0.98,
+        "adr": 122
+      }
+    }
+  ]
+}
