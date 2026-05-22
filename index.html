@@ -189,6 +189,23 @@
           grid-template-columns: repeat(3, 1fr);
         }
       }
+      @media (max-width: 600px) {
+        .fab {
+          bottom: 0.75rem;
+          right: 0.75rem;
+          width: 40px;
+          height: 40px;
+        }
+        .fab-modal {
+          bottom: 4rem;
+          right: 0.75rem;
+          width: calc(100% - 1.5rem);
+          max-width: 320px;
+        }
+        main {
+          padding-bottom: 8rem;
+        }
+      }
       .agent-card {
         background: var(--bg2);
         border: 1px solid var(--border2);
@@ -710,7 +727,7 @@
             .from('leaderboard')
             .select('*')
             .order('score', { ascending: false })
-            .limit(50);
+            .limit(100);
 
         if (!error) {
             st.leaderboard = data;
@@ -720,23 +737,49 @@
 
       async function submitScore(name, score) {
         if (!supabaseClient) {
-            const idx = st.leaderboard.findIndex(
+            let leaderboard = [];
+            try {
+                const r = localStorage.getItem(LB_KEY);
+                leaderboard = r ? JSON.parse(r) : [];
+            } catch (e) {}
+
+            const idx = leaderboard.findIndex(
                 (x) => x.name.toLowerCase() === name.toLowerCase(),
             );
             if (idx >= 0) {
-                if (score > st.leaderboard[idx].score)
-                    st.leaderboard[idx] = { name, score, ts: Date.now() };
-            } else st.leaderboard.push({ name, score, ts: Date.now() });
-            st.leaderboard.sort((a, b) => b.score - a.score);
-            st.leaderboard = st.leaderboard.slice(0, 50);
-            localStorage.setItem(LB_KEY, JSON.stringify(st.leaderboard));
+                if (score > leaderboard[idx].score) {
+                    leaderboard[idx] = { name, score, ts: Date.now() };
+                } else {
+                    // Current score is not better than stored high score
+                    st.leaderboard = leaderboard;
+                    render();
+                    return;
+                }
+            } else {
+                leaderboard.push({ name, score, ts: Date.now() });
+            }
+            leaderboard.sort((a, b) => b.score - a.score);
+            leaderboard = leaderboard.slice(0, 100);
+            st.leaderboard = leaderboard;
+            localStorage.setItem(LB_KEY, JSON.stringify(leaderboard));
+            render();
             return;
         }
 
         try {
-            await supabaseClient
+            // Fetch existing score to ensure we only save the highest
+            const { data: existing } = await supabaseClient
                 .from('leaderboard')
-                .upsert({ name, score, ts: new Date().toISOString() }, { onConflict: 'name' });
+                .select('score')
+                .eq('name', name)
+                .maybeSingle();
+
+            if (!existing || score > (existing.score || 0)) {
+                const { error } = await supabaseClient
+                    .from('leaderboard')
+                    .upsert({ name, score, ts: new Date().toISOString() }, { onConflict: 'name' });
+                if (!error) await loadLB();
+            }
         } catch (e) {
             console.error("Score submission failed", e);
         }
@@ -1112,7 +1155,7 @@
         if (!st.leaderboard.length) {
           h += `<div class="empty-state">No scores yet. You'll be the first!</div>`;
         } else {
-          st.leaderboard.slice(0, 15).forEach((e, i) => {
+          st.leaderboard.forEach((e, i) => {
             const isYou = e.name.toLowerCase() === st.playerName.toLowerCase();
             h += `<div class="lb-row ${isYou ? "you" : ""}">
         <span class="lb-rank ${rankClass(i)}">${ranks[i] || i + 1}</span>

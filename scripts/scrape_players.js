@@ -3,19 +3,20 @@ const cheerio = require('cheerio');
 const fs = require('fs');
 const path = require('path');
 
-const STATS_URL = 'https://www.vlr.gg/stats/?event_group_id=86&region=all&min_rounds=&min_rating=&agent=all&map_id=all&timespan=all';
-const API_BASE_URL = 'https://vlrggapi.vercel.app/v2';
+const EVENT_GROUPS = [
+    { id: '86', name: 'VCT 2026' },
+    { id: '74', name: 'VCT 2025' },
+    { id: '61', name: 'VCT 2024' }
+];
 
-const COUNTRY_TO_REGION = {
-    // AMER
-    'us': 'AMER', 'ca': 'AMER', 'br': 'AMER', 'ar': 'AMER', 'cl': 'AMER', 'mx': 'AMER', 'pe': 'AMER', 'co': 'AMER',
-    // EMEA
-    'tr': 'EMEA', 'ru': 'EMEA', 'fr': 'EMEA', 'gb': 'EMEA', 'de': 'EMEA', 'es': 'EMEA', 'pl': 'EMEA', 'ua': 'EMEA', 'fi': 'EMEA', 'se': 'EMEA', 'no': 'EMEA', 'dk': 'EMEA', 'it': 'EMEA', 'be': 'EMEA', 'nl': 'EMEA', 'cz': 'EMEA', 'at': 'EMEA', 'hu': 'EMEA', 'pt': 'EMEA', 'ie': 'EMEA', 'il': 'EMEA', 'jo': 'EMEA', 'lb': 'EMEA', 'eg': 'EMEA', 'ma': 'EMEA', 'za': 'EMEA', 'lt': 'EMEA', 'hr': 'EMEA', 'kz': 'EMEA',
-    // APAC
-    'kr': 'APAC', 'jp': 'APAC', 'th': 'APAC', 'id': 'APAC', 'ph': 'APAC', 'sg': 'APAC', 'my': 'APAC', 'vn': 'APAC', 'tw': 'APAC', 'in': 'APAC', 'au': 'APAC', 'nz': 'APAC', 'pk': 'APAC',
-    // CN
-    'cn': 'CN'
-};
+const VLR_REGIONS = [
+    { code: 'na', target: 'AMER' },
+    { code: 'la', target: 'AMER' },
+    { code: 'br', target: 'AMER' },
+    { code: 'eu', target: 'EMEA' },
+    { code: 'ap', target: 'APAC' },
+    { code: 'cn', target: 'CN' }
+];
 
 const COUNTRY_NAMES = {
     'us': 'United States', 'ca': 'Canada', 'br': 'Brazil', 'ar': 'Argentina', 'cl': 'Chile', 'mx': 'Mexico', 'pe': 'Peru', 'co': 'Colombia',
@@ -24,34 +25,55 @@ const COUNTRY_NAMES = {
     'cn': 'China'
 };
 
+const API_BASE_URL = 'https://vlrggapi.vercel.app/v2';
+
 async function scrapePlayerList() {
-    console.log('Fetching player list from vlr.gg...');
-    const response = await axios.get(STATS_URL, {
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Cookie': 'abok=1'
+    console.log('Fetching player list from vlr.gg Tier 1 events...');
+    const playerStats = {}; // id -> { id, ign, rounds, region }
+
+    for (const group of EVENT_GROUPS) {
+        for (const vlrReg of VLR_REGIONS) {
+            const url = `https://www.vlr.gg/stats/?event_group_id=${group.id}&region=${vlrReg.code}&min_rounds=0&min_rating=0&agent=all&map_id=all&timespan=all`;
+            console.log(`Scraping ${group.name} - ${vlrReg.code.toUpperCase()}...`);
+
+            try {
+                const response = await axios.get(url, {
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        'Cookie': 'abok=1'
+                    }
+                });
+                const $ = cheerio.load(response.data);
+
+                $('.wf-table tr').each((i, el) => {
+                    if (i === 0) return;
+                    const tds = $(el).find('td');
+                    const nameLink = tds.first().find('a');
+                    const href = nameLink.attr('href');
+                    if (!href) return;
+
+                    const id = href.split('/')[2];
+                    const ign = nameLink.find('.text-of').text().trim();
+                    const rounds = parseInt($(tds[2]).text().trim()) || 0;
+
+                    if (!playerStats[id]) {
+                        playerStats[id] = { id, ign, totalRounds: 0, region: vlrReg.target };
+                    }
+                    playerStats[id].totalRounds += rounds;
+                });
+            } catch (e) {
+                console.error(`Error scraping ${group.name} ${vlrReg.code}: ${e.message}`);
+            }
         }
-    });
-    const $ = cheerio.load(response.data);
-    const players = [];
+    }
 
-    $('.wf-table tr').each((i, el) => {
-        if (i === 0) return; // skip header
-        const nameLink = $(el).find('td').first().find('a');
-        const href = nameLink.attr('href');
-        if (!href) return;
-
-        const id = href.split('/')[2];
-        const ign = nameLink.find('.text-inner').text().trim();
-
-        players.push({ id, ign });
-    });
-
-    console.log(`Found ${players.length} players.`);
-    return players;
+    // Filter by min 200 rounds (~10 games)
+    const filtered = Object.values(playerStats).filter(p => p.totalRounds >= 200);
+    console.log(`Found ${filtered.length} players with at least 200 rounds in Tier 1.`);
+    return filtered;
 }
 
-async function getPlayerData(id) {
+async function getPlayerData(id, region) {
     try {
         const response = await axios.get(`${API_BASE_URL}/player?id=${id}&timespan=all`);
         if (response.data.status === 'success' && response.data.data.segments.length > 0) {
@@ -92,14 +114,30 @@ async function getPlayerData(id) {
             };
 
             const countryCode = p.country?.toLowerCase();
+            let teamName = p.current_team?.name || 'Free Agent';
+
+            // Clean up team name from VLR API debris (removes date ranges, "joined in", "inactive")
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const monthRegex = new RegExp(`(${months.join('|')}).*`, 'g');
+
+            teamName = teamName
+                .replace(/\s*(joined|left) in.*/gi, '')
+                .replace(/\s*inactive/gi, '')
+                .replace(monthRegex, '')
+                .replace(/\d{4}\s*–.*/g, '')
+                .trim();
+
+            let finalRegion = region;
+            // Manual overrides for specific player edge cases
+            if (p.name?.toLowerCase() === 'infiltrator') finalRegion = 'AMER';
 
             return {
                 ign: p.name,
                 name: p.real_name || p.name,
                 country: COUNTRY_NAMES[countryCode] || p.country || 'Unknown',
-                region: COUNTRY_TO_REGION[countryCode] || 'Unknown',
+                region: finalRegion,
                 tier: 'Tier 1',
-                team: p.current_team?.name || 'Free Agent',
+                team: teamName || 'Free Agent',
                 agents,
                 overall
             };
@@ -127,7 +165,7 @@ async function main() {
 
         for (let i = 0; i < selected.length; i++) {
             if (i % 10 === 0) console.log(`Progress: ${i}/${selected.length}`);
-            const data = await getPlayerData(selected[i].id);
+            const data = await getPlayerData(selected[i].id, selected[i].region);
             if (data && data.agents.length > 0) {
                 results.push(data);
             }
