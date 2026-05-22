@@ -189,6 +189,23 @@
           grid-template-columns: repeat(3, 1fr);
         }
       }
+      @media (max-width: 600px) {
+        .fab {
+          bottom: 0.75rem;
+          right: 0.75rem;
+          width: 40px;
+          height: 40px;
+        }
+        .fab-modal {
+          bottom: 4rem;
+          right: 0.75rem;
+          width: calc(100% - 1.5rem);
+          max-width: 320px;
+        }
+        main {
+          padding-bottom: 8rem;
+        }
+      }
       .agent-card {
         background: var(--bg2);
         border: 1px solid var(--border2);
