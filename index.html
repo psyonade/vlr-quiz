@@ -737,23 +737,49 @@
 
       async function submitScore(name, score) {
         if (!supabaseClient) {
-            const idx = st.leaderboard.findIndex(
+            let leaderboard = [];
+            try {
+                const r = localStorage.getItem(LB_KEY);
+                leaderboard = r ? JSON.parse(r) : [];
+            } catch (e) {}
+
+            const idx = leaderboard.findIndex(
                 (x) => x.name.toLowerCase() === name.toLowerCase(),
             );
             if (idx >= 0) {
-                if (score > st.leaderboard[idx].score)
-                    st.leaderboard[idx] = { name, score, ts: Date.now() };
-            } else st.leaderboard.push({ name, score, ts: Date.now() });
-            st.leaderboard.sort((a, b) => b.score - a.score);
-            st.leaderboard = st.leaderboard.slice(0, 100);
-            localStorage.setItem(LB_KEY, JSON.stringify(st.leaderboard));
+                if (score > leaderboard[idx].score) {
+                    leaderboard[idx] = { name, score, ts: Date.now() };
+                } else {
+                    // Current score is not better than stored high score
+                    st.leaderboard = leaderboard;
+                    render();
+                    return;
+                }
+            } else {
+                leaderboard.push({ name, score, ts: Date.now() });
+            }
+            leaderboard.sort((a, b) => b.score - a.score);
+            leaderboard = leaderboard.slice(0, 100);
+            st.leaderboard = leaderboard;
+            localStorage.setItem(LB_KEY, JSON.stringify(leaderboard));
+            render();
             return;
         }
 
         try {
-            await supabaseClient
+            // Fetch existing score to ensure we only save the highest
+            const { data: existing } = await supabaseClient
                 .from('leaderboard')
-                .upsert({ name, score, ts: new Date().toISOString() }, { onConflict: 'name' });
+                .select('score')
+                .eq('name', name)
+                .maybeSingle();
+
+            if (!existing || score > (existing.score || 0)) {
+                const { error } = await supabaseClient
+                    .from('leaderboard')
+                    .upsert({ name, score, ts: new Date().toISOString() }, { onConflict: 'name' });
+                if (!error) await loadLB();
+            }
         } catch (e) {
             console.error("Score submission failed", e);
         }

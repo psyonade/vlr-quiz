@@ -4,23 +4,19 @@ const fs = require('fs');
 const path = require('path');
 
 const EVENT_GROUPS = [
-    { id: '86', tier: 'Tier 1' }, // VCT 2026
-    { id: '85', tier: 'Tier 2' }, // Challengers 2026
-    { id: '87', tier: 'Tier 2' }, // Game Changers 2026
+    { id: '86', name: 'VCT 2026' },
+    { id: '74', name: 'VCT 2025' },
+    { id: '61', name: 'VCT 2024' }
 ];
-const STATS_URL_BASE = 'https://www.vlr.gg/stats/?region=all&min_rounds=&min_rating=&agent=all&map_id=all&timespan=all&event_group_id=';
-const API_BASE_URL = 'https://vlrggapi.vercel.app/v2';
 
-const COUNTRY_TO_REGION = {
-    // AMER
-    'us': 'AMER', 'ca': 'AMER', 'br': 'AMER', 'ar': 'AMER', 'cl': 'AMER', 'mx': 'AMER', 'pe': 'AMER', 'co': 'AMER',
-    // EMEA
-    'tr': 'EMEA', 'ru': 'EMEA', 'fr': 'EMEA', 'gb': 'EMEA', 'de': 'EMEA', 'es': 'EMEA', 'pl': 'EMEA', 'ua': 'EMEA', 'fi': 'EMEA', 'se': 'EMEA', 'no': 'EMEA', 'dk': 'EMEA', 'it': 'EMEA', 'be': 'EMEA', 'nl': 'EMEA', 'cz': 'EMEA', 'at': 'EMEA', 'hu': 'EMEA', 'pt': 'EMEA', 'ie': 'EMEA', 'il': 'EMEA', 'jo': 'EMEA', 'lb': 'EMEA', 'eg': 'EMEA', 'ma': 'EMEA', 'za': 'EMEA', 'lt': 'EMEA', 'hr': 'EMEA', 'kz': 'EMEA',
-    // APAC
-    'kr': 'APAC', 'jp': 'APAC', 'th': 'APAC', 'id': 'APAC', 'ph': 'APAC', 'sg': 'APAC', 'my': 'APAC', 'vn': 'APAC', 'tw': 'APAC', 'in': 'APAC', 'au': 'APAC', 'nz': 'APAC', 'pk': 'APAC',
-    // CN
-    'cn': 'CN'
-};
+const VLR_REGIONS = [
+    { code: 'na', target: 'AMER' },
+    { code: 'la', target: 'AMER' },
+    { code: 'br', target: 'AMER' },
+    { code: 'eu', target: 'EMEA' },
+    { code: 'ap', target: 'APAC' },
+    { code: 'cn', target: 'CN' }
+];
 
 const COUNTRY_NAMES = {
     'us': 'United States', 'ca': 'Canada', 'br': 'Brazil', 'ar': 'Argentina', 'cl': 'Chile', 'mx': 'Mexico', 'pe': 'Peru', 'co': 'Colombia',
@@ -29,45 +25,55 @@ const COUNTRY_NAMES = {
     'cn': 'China'
 };
 
+const API_BASE_URL = 'https://vlrggapi.vercel.app/v2';
+
 async function scrapePlayerList() {
-    console.log('Fetching player list from vlr.gg...');
-    const players = [];
-    const seenIds = new Set();
+    console.log('Fetching player list from vlr.gg Tier 1 events...');
+    const playerStats = {}; // id -> { id, ign, rounds, region }
 
     for (const group of EVENT_GROUPS) {
-        console.log(`Scraping event group ${group.id} (${group.tier})...`);
-        try {
-            const response = await axios.get(STATS_URL_BASE + group.id, {
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                    'Cookie': 'abok=1'
-                }
-            });
-            const $ = cheerio.load(response.data);
+        for (const vlrReg of VLR_REGIONS) {
+            const url = `https://www.vlr.gg/stats/?event_group_id=${group.id}&region=${vlrReg.code}&min_rounds=0&min_rating=0&agent=all&map_id=all&timespan=all`;
+            console.log(`Scraping ${group.name} - ${vlrReg.code.toUpperCase()}...`);
 
-            $('.wf-table tr').each((i, el) => {
-                if (i === 0) return; // skip header
-                const nameLink = $(el).find('td').first().find('a');
-                const href = nameLink.attr('href');
-                if (!href) return;
+            try {
+                const response = await axios.get(url, {
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        'Cookie': 'abok=1'
+                    }
+                });
+                const $ = cheerio.load(response.data);
 
-                const id = href.split('/')[2];
-                if (seenIds.has(id)) return;
+                $('.wf-table tr').each((i, el) => {
+                    if (i === 0) return;
+                    const tds = $(el).find('td');
+                    const nameLink = tds.first().find('a');
+                    const href = nameLink.attr('href');
+                    if (!href) return;
 
-                const ign = nameLink.find('.text-inner').text().trim();
-                seenIds.add(id);
-                players.push({ id, ign, tier: group.tier });
-            });
-        } catch (e) {
-            console.error(`Error scraping group ${group.id}: ${e.message}`);
+                    const id = href.split('/')[2];
+                    const ign = nameLink.find('.text-of').text().trim();
+                    const rounds = parseInt($(tds[2]).text().trim()) || 0;
+
+                    if (!playerStats[id]) {
+                        playerStats[id] = { id, ign, totalRounds: 0, region: vlrReg.target };
+                    }
+                    playerStats[id].totalRounds += rounds;
+                });
+            } catch (e) {
+                console.error(`Error scraping ${group.name} ${vlrReg.code}: ${e.message}`);
+            }
         }
     }
 
-    console.log(`Found ${players.length} unique players across all groups.`);
-    return players;
+    // Filter by min 200 rounds (~10 games)
+    const filtered = Object.values(playerStats).filter(p => p.totalRounds >= 200);
+    console.log(`Found ${filtered.length} players with at least 200 rounds in Tier 1.`);
+    return filtered;
 }
 
-async function getPlayerData(id, tier = 'Tier 1') {
+async function getPlayerData(id, region) {
     try {
         const response = await axios.get(`${API_BASE_URL}/player?id=${id}&timespan=all`);
         if (response.data.status === 'success' && response.data.data.segments.length > 0) {
@@ -108,14 +114,30 @@ async function getPlayerData(id, tier = 'Tier 1') {
             };
 
             const countryCode = p.country?.toLowerCase();
+            let teamName = p.current_team?.name || 'Free Agent';
+
+            // Clean up team name from VLR API debris (removes date ranges, "joined in", "inactive")
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const monthRegex = new RegExp(`(${months.join('|')}).*`, 'g');
+
+            teamName = teamName
+                .replace(/\s*(joined|left) in.*/gi, '')
+                .replace(/\s*inactive/gi, '')
+                .replace(monthRegex, '')
+                .replace(/\d{4}\s*–.*/g, '')
+                .trim();
+
+            let finalRegion = region;
+            // Manual overrides for specific player edge cases
+            if (p.name?.toLowerCase() === 'infiltrator') finalRegion = 'AMER';
 
             return {
                 ign: p.name,
                 name: p.real_name || p.name,
                 country: COUNTRY_NAMES[countryCode] || p.country || 'Unknown',
-                region: COUNTRY_TO_REGION[countryCode] || 'Unknown',
-                tier: tier,
-                team: p.current_team?.name || 'Free Agent',
+                region: finalRegion,
+                tier: 'Tier 1',
+                team: teamName || 'Free Agent',
                 agents,
                 overall
             };
@@ -129,7 +151,7 @@ async function getPlayerData(id, tier = 'Tier 1') {
 async function main() {
     const limitArg = process.argv.find(arg => arg.startsWith('--limit='));
     const envLimit = process.env.SCRAPE_LIMIT;
-    const limit = limitArg ? parseInt(limitArg.split('=')[1]) : (envLimit ? parseInt(envLimit) : 250);
+    const limit = limitArg ? parseInt(limitArg.split('=')[1]) : (envLimit ? parseInt(envLimit) : 150);
 
     try {
         const allPlayers = await scrapePlayerList();
@@ -143,7 +165,7 @@ async function main() {
 
         for (let i = 0; i < selected.length; i++) {
             if (i % 10 === 0) console.log(`Progress: ${i}/${selected.length}`);
-            const data = await getPlayerData(selected[i].id, selected[i].tier);
+            const data = await getPlayerData(selected[i].id, selected[i].region);
             if (data && data.agents.length > 0) {
                 results.push(data);
             }
